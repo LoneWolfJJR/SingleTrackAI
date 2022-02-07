@@ -93,6 +93,10 @@ namespace SingleTrackAI
                             {
                                 vehicleType = lane.m_stopType;
                             }
+                            else if (vehicleType != lane.m_stopType)
+                            {
+                                return false; // Different vehicle types on same segment; this is not supported.
+                            }
                         }
 
                         break;
@@ -105,6 +109,10 @@ namespace SingleTrackAI
                             if (vehicleType == VehicleInfo.VehicleType.None)
                             {
                                 vehicleType = lane.m_vehicleType;
+                            }
+                            else if (vehicleType != lane.m_vehicleType)
+                            {
+                                return false; // Different vehicle types on same segment; this is not supported.
                             }
 
                             switch (lane.m_direction)
