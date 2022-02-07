@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SingleTrackAI
 {
     public struct TrackInfo
     {
+        private const VehicleInfo.VehicleType SupportedVehicleTypes = VehicleInfo.VehicleType.Train | VehicleInfo.VehicleType.Metro;
+
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once InconsistentNaming
         // TODO: Find a way to dynamically detect these tracks to avoid hardcoding them.
@@ -18,14 +18,21 @@ namespace SingleTrackAI
             "Steel Metro Track Ground Small Two-Way NoBar",
         };
 
-        public readonly NetInfo NetInfo;
-        public readonly VehicleInfo.VehicleType VehicleType;
-        public readonly int Tracks;
-        public readonly int Tracks1Way;
-        public readonly int Tracks1WayForward;
-        public readonly int Tracks1WayBackward;
-        public readonly int Tracks2Way;
-        public readonly int Platforms;
+        public NetInfo NetInfo { get; }
+
+        public VehicleInfo.VehicleType VehicleType { get; }
+
+        public int Tracks { get; private set; }
+
+        public int Tracks1Way { get; private set; }
+
+        public int Tracks1WayForward { get; private set; }
+
+        public int Tracks1WayBackward { get; private set; }
+
+        public int Tracks2Way { get; private set; }
+
+        public int Platforms { get; private set; }
 
         public bool IsSingleTwoWayTrack => IsGenericSingleTwoWayTrack || IsMetroOverhaulSingleTwoWayTrack;
 
@@ -49,24 +56,92 @@ namespace SingleTrackAI
 
         public bool IsDoubleStationTrack => Platforms != 0 && Tracks == 2;
 
-        public TrackInfo(
-            NetInfo netInfo,
-            VehicleInfo.VehicleType vehicleType,
-            int tracks,
-            int tracks1Way,
-            int tracks1WayForward,
-            int tracks1WayBackward,
-            int tracks2Way,
-            int platforms)
+        public TrackInfo(NetInfo netInfo)
         {
+            if (netInfo == null)
+                throw new ArgumentNullException(nameof(netInfo));
+
+            if (netInfo.m_vehicleTypes == VehicleInfo.VehicleType.None)
+                throw new ArgumentOutOfRangeException(nameof(netInfo), "Network has no vehicle types; this is not supported.");
+
+            if ((netInfo.m_vehicleTypes | SupportedVehicleTypes) != SupportedVehicleTypes)
+                throw new ArgumentOutOfRangeException(nameof(netInfo), "Network has unsupported vehicle types.");
+
+            if ((netInfo.m_vehicleTypes ^ SupportedVehicleTypes) == VehicleInfo.VehicleType.None)
+                throw new ArgumentOutOfRangeException(nameof(netInfo), "Network has multiple vehicle types; this is not supported.");
+
             NetInfo = netInfo;
-            VehicleType = vehicleType;
-            Tracks = tracks;
-            Tracks1Way = tracks1Way;
-            Tracks1WayForward = tracks1WayForward;
-            Tracks1WayBackward = tracks1WayBackward;
-            Tracks2Way = tracks2Way;
-            Platforms = platforms;
+
+            VehicleType = NetInfo.m_vehicleTypes;
+
+            Tracks = 0;
+
+            Tracks1Way = 0;
+            Tracks2Way = 0;
+
+            Tracks1WayForward  = 0;
+            Tracks1WayBackward = 0;
+
+            Platforms = 0;
+
+            // Use for instead of foreach since we don't want to allocate memory for the enumerator.
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (int i = 0; i < NetInfo.m_lanes.Length; i++)
+            {
+                NetInfo.Lane lane = NetInfo.m_lanes[i];
+
+                ProcessLane(lane);
+            }
+        }
+
+        private void ProcessLane(NetInfo.Lane lane)
+        {
+            switch (lane.m_laneType)
+            {
+                case NetInfo.LaneType.Pedestrian:
+                    ProcessPedestrianLane(lane);
+                    break;
+
+                case NetInfo.LaneType.Vehicle:
+                    ProcessVehicleLane(lane);
+                    break;
+            }
+        }
+
+        private void ProcessPedestrianLane(NetInfo.Lane lane)
+        {
+            bool stopTypeSupported = (lane.m_stopType & SupportedVehicleTypes) == lane.m_stopType;
+            if (stopTypeSupported)
+                Platforms++;
+        }
+
+        private void ProcessVehicleLane(NetInfo.Lane lane)
+        {
+            bool vehicleTypeSupported = (lane.m_vehicleType & SupportedVehicleTypes) == lane.m_vehicleType;
+            if (!vehicleTypeSupported)
+                return;
+
+            Tracks++;
+
+            switch (lane.m_direction)
+            {
+                case NetInfo.Direction.Forward:
+                case NetInfo.Direction.AvoidForward:
+                    Tracks1Way++;
+                    Tracks1WayForward++;
+                    break;
+
+                case NetInfo.Direction.Backward:
+                case NetInfo.Direction.AvoidBackward:
+                    Tracks1Way++;
+                    Tracks1WayBackward++;
+                    break;
+
+                case NetInfo.Direction.Both:
+                case NetInfo.Direction.AvoidBoth:
+                    Tracks2Way++;
+                    break;
+            }
         }
     }
 }
