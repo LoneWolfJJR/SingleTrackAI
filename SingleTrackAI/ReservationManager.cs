@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using ColossalFramework;
 using ICities;
@@ -27,133 +25,34 @@ namespace SingleTrackAI
 
         public static bool IsSingleTrack2WSegment(ushort segment_id)
         {
-            return CheckTrainTrackSegment(
-                segment_id,
-                nameof(IsSingleTrack2WSegment),
-                segment => segment.IsSingleTwoWayTrack);
+            return CheckTrainTrackSegment(segment_id, nameof(IsSingleTrack2WSegment), segment => segment.IsSingleTwoWayTrack);
         }
 
         public static bool IsSingleTrackStation(ushort segment_id)
         {
-            return CheckTrainTrackSegment(
-                segment_id,
-                nameof(IsSingleTrackStation),
-                segment => segment.IsSingleStationTrack);
+            return CheckTrainTrackSegment(segment_id, nameof(IsSingleTrackStation), segment => segment.IsSingleStationTrack);
         }
 
         public static bool IsDoubleTrackStation(ushort segment_id)
         {
-            return CheckTrainTrackSegment(
-                segment_id,
-                nameof(IsDoubleTrackStation),
-                segment => segment.IsDoubleStationTrack);
+            return CheckTrainTrackSegment(segment_id, nameof(IsDoubleTrackStation), segment => segment.IsDoubleStationTrack);
         }
 
         public static bool IsStation(ushort segment_id)
         {
-            return CheckTrainTrackSegment(
-                segment_id,
-                nameof(IsStation),
-                segment => segment.IsStationTrack);
+            return CheckTrainTrackSegment(segment_id, nameof(IsStation), segment => segment.IsStationTrack);
         }
 
         public static bool RequireReservation(ushort segment_id)
         {
-            return CheckTrainTrackSegment(
-                segment_id,
-                nameof(RequireReservation),
-                segment => segment.IsSingleTwoWayTrack || segment.IsDoubleStationTrack);
+            return CheckTrainTrackSegment(segment_id, nameof(RequireReservation), segment => segment.IsSingleTwoWayTrack || segment.IsDoubleStationTrack);
         }
 
         private static bool CheckTrainTrackSegment(ushort segment_id, string name, Func<TrackInfo, bool> check_func)
         {
             NetSegment segment = Singleton<NetManager>.instance.m_segments.m_buffer[segment_id];
-            NetInfo.Lane[] lanes = segment.Info.m_lanes;
+            TrackInfo trackInfo = new TrackInfo(segment.Info);
 
-            VehicleInfo.VehicleType vehicleType = VehicleInfo.VehicleType.None;
-            int tracks = 0;
-            int tracks_forward = 0;
-            int tracks_backward = 0;
-            int tracks_one_way = 0;
-            int tracks_two_way = 0;
-            int platforms = 0;
-
-            // Use for instead of foreach since we don't want to allocate memory for the enumerator.
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (int i = 0; i < lanes.Length; i++)
-            {
-                NetInfo.Lane lane = lanes[i];
-
-                switch (lane.m_laneType)
-                {
-                    case NetInfo.LaneType.Pedestrian:
-                        if (lane.m_stopType == VehicleInfo.VehicleType.Train || lane.m_stopType == VehicleInfo.VehicleType.Metro)
-                        {
-                            platforms++;
-
-                            if (vehicleType == VehicleInfo.VehicleType.None)
-                            {
-                                vehicleType = lane.m_stopType;
-                            }
-                            else if (vehicleType != lane.m_stopType)
-                            {
-                                return false; // Different vehicle types on same segment; this is not supported.
-                            }
-                        }
-
-                        break;
-
-                    case NetInfo.LaneType.Vehicle:
-                        if (lane.m_vehicleType == VehicleInfo.VehicleType.Train || lane.m_vehicleType == VehicleInfo.VehicleType.Metro)
-                        {
-                            tracks++;
-
-                            if (vehicleType == VehicleInfo.VehicleType.None)
-                            {
-                                vehicleType = lane.m_vehicleType;
-                            }
-                            else if (vehicleType != lane.m_vehicleType)
-                            {
-                                return false; // Different vehicle types on same segment; this is not supported.
-                            }
-
-                            switch (lane.m_direction)
-                            {
-                                case NetInfo.Direction.Forward:
-                                    tracks_one_way++;
-                                    tracks_forward++;
-                                    break;
-
-                                case NetInfo.Direction.Backward:
-                                    tracks_one_way++;
-                                    tracks_backward++;
-                                    break;
-
-                                case NetInfo.Direction.Both:
-                                    tracks_two_way++;
-                                    break;
-
-                                case NetInfo.Direction.AvoidBackward:
-                                    tracks_one_way++;
-                                    tracks_backward++;
-                                    break;
-
-                                case NetInfo.Direction.AvoidForward:
-                                    tracks_one_way++;
-                                    tracks_forward++;
-                                    break;
-
-                                case NetInfo.Direction.AvoidBoth:
-                                    tracks_two_way++;
-                                    break;
-                            }
-                        }
-
-                        break;
-                }
-            }
-
-            var trackInfo = new TrackInfo(segment.Info, vehicleType, tracks, tracks_one_way, tracks_forward, tracks_backward, tracks_two_way, platforms);
             bool result = check_func(trackInfo);
 
             //Debug.Log($"[STTAI] {name}: {segment.Info.name}, tracks {tracks}, one-way {tracks_one_way}, two-way {tracks_two_way}, platforms {platforms}, result {result}");
