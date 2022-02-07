@@ -72,6 +72,8 @@ namespace SingleTrackAI
 
             VehicleInfo.VehicleType vehicleType = VehicleInfo.VehicleType.None;
             int tracks = 0;
+            int tracks_forward = 0;
+            int tracks_backward = 0;
             int tracks_one_way = 0;
             int tracks_two_way = 0;
             int platforms = 0;
@@ -119,10 +121,12 @@ namespace SingleTrackAI
                             {
                                 case NetInfo.Direction.Forward:
                                     tracks_one_way++;
+                                    tracks_forward++;
                                     break;
 
                                 case NetInfo.Direction.Backward:
                                     tracks_one_way++;
+                                    tracks_backward++;
                                     break;
 
                                 case NetInfo.Direction.Both:
@@ -131,10 +135,12 @@ namespace SingleTrackAI
 
                                 case NetInfo.Direction.AvoidBackward:
                                     tracks_one_way++;
+                                    tracks_backward++;
                                     break;
 
                                 case NetInfo.Direction.AvoidForward:
                                     tracks_one_way++;
+                                    tracks_forward++;
                                     break;
 
                                 case NetInfo.Direction.AvoidBoth:
@@ -147,7 +153,7 @@ namespace SingleTrackAI
                 }
             }
 
-            var trackInfo = new TrackInfo(segment.Info, vehicleType, tracks, tracks_one_way, tracks_two_way, platforms);
+            var trackInfo = new TrackInfo(segment.Info, vehicleType, tracks, tracks_one_way, tracks_forward, tracks_backward, tracks_two_way, platforms);
             bool result = check_func(trackInfo);
 
             //Debug.Log($"[STTAI] {name}: {segment.Info.name}, tracks {tracks}, one-way {tracks_one_way}, two-way {tracks_two_way}, platforms {platforms}, result {result}");
