@@ -20,7 +20,7 @@ namespace SingleTrackAI
             var networks = Resources.FindObjectsOfTypeAll<NetInfo>();
             var tracks = from network in networks
                          where network.m_segments.Length != 0
-                         where network.m_lanes.Any(lane => lane.m_vehicleType == VehicleInfo.VehicleType.Train)
+                         where network.m_lanes.Any(lane => lane.m_vehicleType == VehicleInfo.VehicleType.Train || lane.m_vehicleType == VehicleInfo.VehicleType.Metro)
                          orderby network.name
                          select network;
 

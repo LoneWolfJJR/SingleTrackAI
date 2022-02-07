@@ -87,7 +87,7 @@ namespace SingleTrackAI
                 switch (lane.m_laneType)
                 {
                     case NetInfo.LaneType.Pedestrian:
-                        if (lane.m_stopType == VehicleInfo.VehicleType.Train)
+                        if (lane.m_stopType == VehicleInfo.VehicleType.Train || lane.m_stopType == VehicleInfo.VehicleType.Metro)
                         {
                             platforms++;
 
@@ -104,7 +104,7 @@ namespace SingleTrackAI
                         break;
 
                     case NetInfo.LaneType.Vehicle:
-                        if (lane.m_vehicleType == VehicleInfo.VehicleType.Train)
+                        if (lane.m_vehicleType == VehicleInfo.VehicleType.Train || lane.m_vehicleType == VehicleInfo.VehicleType.Metro)
                         {
                             tracks++;
 
