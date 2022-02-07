@@ -65,6 +65,7 @@
     <Compile Include="ReservationManager.cs" />
     <Compile Include="detour.cs" />
     <Compile Include="LoadingExtension.cs" />
+    <Compile Include="TrackInfo.cs" />
     <Compile Include="SingleTrainTrackAI.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="TrackExporter.cs" />

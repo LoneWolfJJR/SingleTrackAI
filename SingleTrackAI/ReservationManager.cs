@@ -30,7 +30,7 @@ namespace SingleTrackAI
             return CheckTrainTrackSegment(
                 segment_id,
                 nameof(IsSingleTrack2WSegment),
-                (tracks, tracks_one_way, tracks_two_way, platforms) => tracks == 1 && tracks_two_way == 1);
+                segment => segment.IsSingleTwoWayTrack);
         }
 
         public static bool IsSingleTrackStation(ushort segment_id)
@@ -38,7 +38,7 @@ namespace SingleTrackAI
             return CheckTrainTrackSegment(
                 segment_id,
                 nameof(IsSingleTrackStation),
-                (tracks, tracks_one_way, tracks_two_way, platforms) => platforms != 0 && tracks == 1);
+                segment => segment.IsSingleStationTrack);
         }
 
         public static bool IsDoubleTrackStation(ushort segment_id)
@@ -46,7 +46,7 @@ namespace SingleTrackAI
             return CheckTrainTrackSegment(
                 segment_id,
                 nameof(IsDoubleTrackStation),
-                (tracks, tracks_one_way, tracks_two_way, platforms) => platforms != 0 && tracks == 2);
+                segment => segment.IsDoubleStationTrack);
         }
 
         public static bool IsStation(ushort segment_id)
@@ -54,7 +54,7 @@ namespace SingleTrackAI
             return CheckTrainTrackSegment(
                 segment_id,
                 nameof(IsStation),
-                (tracks, tracks_one_way, tracks_two_way, platforms) => platforms != 0 && (tracks == 1 || tracks == 2));
+                segment => segment.IsStationTrack);
         }
 
         public static bool RequireReservation(ushort segment_id)
@@ -62,15 +62,15 @@ namespace SingleTrackAI
             return CheckTrainTrackSegment(
                 segment_id,
                 nameof(RequireReservation),
-                (tracks, tracks_one_way, tracks_two_way, platforms) => (tracks == 1 && tracks_two_way == 1) ||
-                                                                       (platforms != 0 && tracks == 2));
+                segment => segment.IsSingleTwoWayTrack || segment.IsDoubleStationTrack);
         }
 
-        private static bool CheckTrainTrackSegment(ushort segment_id, string name, Func<int, int, int, int, bool> check_func)
+        private static bool CheckTrainTrackSegment(ushort segment_id, string name, Func<TrackInfo, bool> check_func)
         {
             NetSegment segment = Singleton<NetManager>.instance.m_segments.m_buffer[segment_id];
             NetInfo.Lane[] lanes = segment.Info.m_lanes;
 
+            VehicleInfo.VehicleType vehicleType = VehicleInfo.VehicleType.None;
             int tracks = 0;
             int tracks_one_way = 0;
             int tracks_two_way = 0;
@@ -86,13 +86,26 @@ namespace SingleTrackAI
                 {
                     case NetInfo.LaneType.Pedestrian:
                         if (lane.m_stopType == VehicleInfo.VehicleType.Train)
+                        {
                             platforms++;
+
+                            if (vehicleType == VehicleInfo.VehicleType.None)
+                            {
+                                vehicleType = lane.m_stopType;
+                            }
+                        }
+
                         break;
 
                     case NetInfo.LaneType.Vehicle:
                         if (lane.m_vehicleType == VehicleInfo.VehicleType.Train)
                         {
                             tracks++;
+
+                            if (vehicleType == VehicleInfo.VehicleType.None)
+                            {
+                                vehicleType = lane.m_vehicleType;
+                            }
 
                             switch (lane.m_direction)
                             {
@@ -126,7 +139,8 @@ namespace SingleTrackAI
                 }
             }
 
-            bool result = check_func(tracks, tracks_one_way, tracks_two_way, platforms);
+            var trackInfo = new TrackInfo(segment.Info, vehicleType, tracks, tracks_one_way, tracks_two_way, platforms);
+            bool result = check_func(trackInfo);
 
             //Debug.Log($"[STTAI] {name}: {segment.Info.name}, tracks {tracks}, one-way {tracks_one_way}, two-way {tracks_two_way}, platforms {platforms}, result {result}");
 
