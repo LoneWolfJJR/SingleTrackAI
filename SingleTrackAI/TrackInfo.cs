@@ -50,7 +50,7 @@ namespace SingleTrackAI
             VehicleType == VehicleInfo.VehicleType.Metro &&
             MOM_TWOWAY_TRACKS.Contains(NetInfo.name);
 
-        public bool IsStationTrack => Platforms != 0 && (Tracks == 1 || Tracks == 2); // TODO: Maybe check if Tracks > 0? This will include quad-station tracks.
+        public bool IsStationTrack => Platforms != 0 && Tracks > 0;
 
         public bool IsSingleStationTrack => Platforms != 0 && Tracks == 1;
 
