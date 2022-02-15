@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using ColossalFramework;
-using ICities;
 
-
-namespace SingleTrackAI
+namespace SingleTrackAI.AI
 {
 
     public class SingleTrack2WSection

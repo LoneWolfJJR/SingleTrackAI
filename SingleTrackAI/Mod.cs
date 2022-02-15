@@ -1,35 +1,73 @@
-using ICities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using CitiesHarmony.API;
+using ColossalFramework.Plugins;
+using ICities;
+using JetBrains.Annotations;
 
 namespace SingleTrackAI
 {
-	public class Mod: IUserMod {
-		
-		public static string modName = "SingleTrainTrackAI";
-		public static String modID = "SingleTrainTrackAI";
-		public static string version = "1.2.1";
-		
-		public string Name {
-			get { return modName; }
-		}
-		public string Description {
-			get { return "Basic AI for 1 lane 2 ways train tracks from One-Way Train Tracks mod by BloodyPenguin"; }
-		}
+    [PublicAPI]
+    public sealed class Mod : IUserMod
+    {
+        private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
+        private static readonly AssemblyName AssemblyName = Assembly.GetName();
 
-        ///////// settings ////////////
+        public static string Name => "SingleTrainTrackAI";
+        public static string Description => "Train AI for two-way single tracks";
+        public static string Version => AssemblyName.Version.ToString(2);
 
-        public static bool allowPriorityQueue = true;
-        public static bool allowFollowing = true;
-        public static bool allowGoAsFarAsPossible = false;
-        public static bool allowSpawnSignals = false;
-        public static bool noCheckOverlapOnLastSegment = false;
+        string IUserMod.Name => Name;
+        string IUserMod.Description => Description;
 
-        //not in xml
-        public static bool fixReverseTrainSingleTrackStation = true;
-        public static bool extendReservationAfterStopStation = true;
-        public static bool includeDoubleTrackStationAfterSingleTrackSection = true;
-        public static bool slowSpeedTrains = false;
+        /// <summary>
+        /// Called by the game when the mod is enabled.
+        /// </summary>
+        public void OnEnabled()
+        {
+            HarmonyHelper.DoOnHarmonyReady(Patcher.Apply);
 
+            Settings.Initialize();
+        }
+
+        /// <summary>
+        /// Called by the game when the mod is disabled.
+        /// </summary>
+        public void OnDisabled()
+        {
+            if (HarmonyHelper.IsHarmonyInstalled)
+                Patcher.Revert();
+        }
+
+        internal static string[] DetermineConflictingMods()
+        {
+            var conflicts = new HashSet<string>();
+
+            var assemblies = from plugin in PluginManager.instance.GetPluginsInfo()
+                             where plugin.isEnabled
+                             from assembly in plugin.GetAssemblies()
+                             select assembly.GetName();
+
+            foreach (var assembly in assemblies)
+            {
+                switch (assembly.Name)
+                {
+                    case "SingleTrackAI":
+                        if (assembly == AssemblyName)
+                            break; // It's us! :)
+
+                        if (assembly.Version < new Version("2.0.0.0"))
+                            conflicts.Add($"SingleTrainTrackAI {assembly.Version}");
+
+                        break;
+                }
+            }
+
+            return conflicts.OrderBy(name => name)
+                            .ToArray();
+        }
     }
 }
 

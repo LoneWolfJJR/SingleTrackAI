@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace SingleTrackAI
+namespace SingleTrackAI.AI
 {
     public struct TrackInfo
     {

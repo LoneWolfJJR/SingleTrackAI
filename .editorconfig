@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = none
+
+[*.{cs,vb}]
+dotnet_style_predefined_type_for_locals_parameters_members=true:suggestion
