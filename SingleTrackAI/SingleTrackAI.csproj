@@ -1,83 +1,63 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6DCB3D4F-D99E-4320-843E-0B7AF1F4AB95}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>SingleTrackAI</RootNamespace>
-    <AssemblyName>SingleTrackAI</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFramework>net35</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /Y &quot;C:\Users\Loïc\Documents\mods\${SolutionName}\bin\${ProjectConfigName}\${SolutionName}.dll&quot; &quot;C:\Users\Loïc\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\${SolutionName}\${SolutionName}.dll&quot;" workingdir="${ProjectDir}" externalConsole="True" />
-        <Command type="BeforeBuild" command="cmd /c &quot;IF EXIST 'C:\Users\Loïc\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\${SolutionName}\${SolutionName}.dll')&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <LangVersion>6</LangVersion>
+
+  <PropertyGroup>
+    <Authors>CoarxFlow; John Rambo</Authors>
+    <Copyright>Copyright © 2017-2018 CoarxFlow; © 2018, 2022 John Rambo</Copyright>
+
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=949504539</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/coarxflow/SingleTrainTrackAI</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <Product>SingleTrainTrackAI</Product>
+    <Version>2.0</Version>
+    <Description>Cities Skylines Train AI for two-way single tracks</Description>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <LangVersion>6</LangVersion>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SingleTrackAI.csproj.DotSettings" />
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="ColossalManaged, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+
+    <Reference Include="ColossalManaged">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="ICities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+
+    <Reference Include="ICities">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ReservationData.cs" />
-    <Compile Include="ReservationManager.cs" />
-    <Compile Include="detour.cs" />
-    <Compile Include="LoadingExtension.cs" />
-    <Compile Include="TrackInfo.cs" />
-    <Compile Include="SingleTrainTrackAI.cs" />
-    <Compile Include="Mod.cs" />
-    <Compile Include="TrackExporter.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>SET FileTarget="D:\SteamLibrary\steamapps\workshop\content\255710\949504539\SingleTrackAI.dll"
-IF EXIST %25FileTarget%25 del /F %25FileTarget%25</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>SET FileSource="D:\Mouette\mods\SingleTrainTrackAI\code\SingleTrackAI\bin\Debug\SingleTrackAI.dll"
-SET FileTarget="D:\SteamLibrary\steamapps\workshop\content\255710\949504539\SingleTrackAI.dll"
-copy %25FileSource%25 %25FileTarget%25 /y</PostBuildEvent>
-  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="mkdir &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.dll&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;" />
+  </Target>
+
 </Project>
