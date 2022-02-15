@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace SingleTrackAI
+namespace SingleTrackAI.Debugging
 {
     public static class TrackExporter
     {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using ColossalFramework;
 using ICities;
+using UnityEngine;
 
-namespace SingleTrackAI
+namespace SingleTrackAI.AI
 {
 
     public class ReservationManager : ThreadingExtensionBase
@@ -148,7 +149,7 @@ namespace SingleTrackAI
                     // -> yes reserving single tracks after station ensure TrainExitStation is properly resolved
                     // There is not a second, separate reservation made (except when branching...)
 
-                    if (Mod.extendReservationAfterStopStation)
+                    if (Settings.ExtendReservationAfterStopStation)
                     {
                         //section.notFromPathSegmentsStartingAt = section.segment_ids.Count; //mark that segments further on have not been path checked
                         AppendNextConnectedSegmentTheOldWay(section, section.segment_ids[section.segment_ids.Count - 1]);
@@ -235,7 +236,7 @@ namespace SingleTrackAI
 
             //activate signal at the end of the single track section
             NetSegment seg = instance3.m_segments.m_buffer[segment_id];
-            if (Mod.allowSpawnSignals && !IsSingleTrack2WSegment(segment_id))
+            if (Settings.AllowSpawnSignals && !IsSingleTrack2WSegment(segment_id))
             {
                 NetNode node1 = instance3.m_nodes.m_buffer[seg.m_startNode];
                 NetNode node2 = instance3.m_nodes.m_buffer[seg.m_endNode];
@@ -322,7 +323,7 @@ namespace SingleTrackAI
             ri.section = section;
             blocking_segment_id = RegisterReservation(ri, leading_vehicle_id, false, -1);
 
-            if (!Mod.allowGoAsFarAsPossible && blocking_segment_id != 0) //cache reservation to avoid recreating it many times in a row
+            if (!Settings.AllowGoAsFarAsPossible && blocking_segment_id != 0) //cache reservation to avoid recreating it many times in a row
             {
                 m_data.ClearCacheForTrain(leading_vehicle_id);
                 m_data.cached_reservations.Add(leading_vehicle_id, ri);
@@ -346,7 +347,7 @@ namespace SingleTrackAI
 
             if (reservation_prevented_at != -1)
             {
-                if (!Mod.allowGoAsFarAsPossible) //revert reserved segments (safe approach)
+                if (!Settings.AllowGoAsFarAsPossible) //revert reserved segments (safe approach)
                 {
                     m_data.RemoveReservation(ri.ID);
                     return ri.section.segment_ids[reservation_prevented_at];
@@ -391,7 +392,7 @@ namespace SingleTrackAI
         public bool AttemptJoinReservation(ReservationInfo current_reservation, SingleTrack2WSection new_reservation, ushort train_id)
         {
             //do not allow train following if route taken by the train is not guaranteed (train could stop at a station and come back its way for example)
-            if (!Mod.allowFollowing || current_reservation.section.containStopStation || new_reservation.containStopStation)
+            if (!Settings.AllowFollowing || current_reservation.section.containStopStation || new_reservation.containStopStation)
                 return false;
 
             if(!current_reservation.refuse_following_trains && current_reservation.section.Compare(new_reservation))
@@ -415,7 +416,7 @@ namespace SingleTrackAI
 
         public void EnqueueReservation(ReservationInfo current_reservation, ushort train_id)
         {
-            if (!Mod.allowPriorityQueue)
+            if (!Settings.AllowPriorityQueue)
                 return;
 
 
@@ -552,7 +553,7 @@ namespace SingleTrackAI
             UnityEngine.Object.DontDestroyOnLoad(Singleton<T>.sInstance.gameObject);
 
     */
-            if(Mod.slowSpeedTrains)
+            if(Settings.SlowSpeedTrains)
             {
                 CLEAR_RESERVATION_AFTER *= 2;
                 NEXT_RESERVATION_AFTER *= 2;
