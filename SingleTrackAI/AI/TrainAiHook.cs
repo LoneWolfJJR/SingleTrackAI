@@ -40,69 +40,69 @@ namespace SingleTrackAI.AI
             _instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
-        public void ArrivingToDestination(ushort leaderId, ref Vehicle leaderData)
+        public void ArrivingToDestination(ushort vehicleId, ref Vehicle vehicleData)
         {
-            ArrivingToDestinationDelegate(_instance, leaderId, ref leaderData);
+            ArrivingToDestinationDelegate(_instance, vehicleId, ref vehicleData);
         }
 
         public void CalculateSegmentPosition(
             ushort vehicleId,
             ref Vehicle vehicleData,
             PathUnit.Position position,
-            uint num4,
-            byte b2,
-            out Vector3 p5,
-            out Vector3 vector2,
-            out float b3)
+            uint laneId,
+            byte offset,
+            out Vector3 pos,
+            out Vector3 dir,
+            out float maxSpeed)
         {
             CalculateSegmentPositionDelegate(
                 _instance,
                 vehicleId,
                 ref vehicleData,
                 position,
-                num4,
-                b2,
-                out p5,
-                out vector2,
-                out b3
+                laneId,
+                offset,
+                out pos,
+                out dir,
+                out maxSpeed
             );
         }
 
-        public float CalculateTargetSpeed(ushort vehicleId, ref Vehicle vehicleData, float f, float num13)
+        public float CalculateTargetSpeed(ushort vehicleId, ref Vehicle vehicleData, float speedLimit, float curve)
         {
-            return CalculateTargetSpeedDelegate(_instance, vehicleId, ref vehicleData, f, num13);
+            return CalculateTargetSpeedDelegate(_instance, vehicleId, ref vehicleData, speedLimit, curve);
         }
 
         public void CheckNextLane(
             ushort vehicleId,
             ref Vehicle vehicleData,
-            ref float num10,
-            PathUnit.Position position2,
-            uint laneId,
-            byte b4,
+            ref float maxSpeed,
             PathUnit.Position position,
-            uint num4,
-            byte positionMOffset,
+            uint laneId,
+            byte offset,
+            PathUnit.Position prevPos,
+            uint prevLaneId,
+            byte prevOffset,
             Bezier3 bezier)
         {
             CheckNextLaneDelegate(
                 _instance,
                 vehicleId,
                 ref vehicleData,
-                ref num10,
-                position2,
-                laneId,
-                b4,
+                ref maxSpeed,
                 position,
-                num4,
-                positionMOffset,
+                laneId,
+                offset,
+                prevPos,
+                prevLaneId,
+                prevOffset,
                 bezier
             );
         }
 
-        public bool CheckOverlap(ushort vehicleId, ref Vehicle vehicleData, Segment3 segment, ushort vehiclePreviouslyReservingSpace)
+        public bool CheckOverlap(ushort vehicleId, ref Vehicle vehicleData, Segment3 segment, ushort ignoreVehicle)
         {
-            return CheckOverlapDelegate(vehicleId, ref vehicleData, segment, vehiclePreviouslyReservingSpace);
+            return CheckOverlapDelegate(vehicleId, ref vehicleData, segment, ignoreVehicle);
         }
 
         public void InvalidPath(ushort vehicleId, ref Vehicle vehicleData, ushort leaderId, ref Vehicle leaderData)
@@ -110,9 +110,9 @@ namespace SingleTrackAI.AI
             InvalidPathDelegate(_instance, vehicleId, ref vehicleData, leaderId, ref leaderData);
         }
 
-        public void UpdateNodeTargetPos(ushort vehicleId, ref Vehicle vehicleData, ushort num12, ref NetNode netNode, ref Vector4 vector, int index)
+        public void UpdateNodeTargetPos(ushort vehicleId, ref Vehicle vehicleData, ushort nodeId, ref NetNode nodeData, ref Vector4 targetPos, int index)
         {
-            UpdateNodeTargetPosDelegate(_instance, vehicleId, ref vehicleData, num12, ref netNode, ref vector, index);
+            UpdateNodeTargetPosDelegate(_instance, vehicleId, ref vehicleData, nodeId, ref nodeData, ref targetPos, index);
         }
     }
 }
