@@ -7,8 +7,8 @@ namespace SingleTrackAI.AI
     {
         public delegate void ArrivingToDestinationDelegate(
             TrainAI trainAi,
-            ushort leaderId,
-            ref Vehicle leaderData
+            ushort vehicleId,
+            ref Vehicle vehicleData
         );
 
         public delegate void CalculateSegmentPositionDelegate(
@@ -16,32 +16,32 @@ namespace SingleTrackAI.AI
             ushort vehicleId,
             ref Vehicle vehicleData,
             PathUnit.Position position,
-            uint num4,
-            byte b2,
-            out Vector3 p5,
-            out Vector3 vector2,
-            out float b3
+            uint laneId,
+            byte offset,
+            out Vector3 pos,
+            out Vector3 dir,
+            out float maxSpeed
         );
 
         public delegate float CalculateTargetSpeedDelegate(
             TrainAI trainAi,
             ushort vehicleId,
             ref Vehicle vehicleData,
-            float f,
-            float num13
+            float speedLimit,
+            float curve
         );
 
         public delegate void CheckNextLaneDelegate(
             TrainAI trainAi,
             ushort vehicleId,
             ref Vehicle vehicleData,
-            ref float num10,
-            PathUnit.Position position2,
-            uint laneId,
-            byte b4,
+            ref float maxSpeed,
             PathUnit.Position position,
-            uint num4,
-            byte positionMOffset,
+            uint laneId,
+            byte offset,
+            PathUnit.Position prevPos,
+            uint prevLaneId,
+            byte prevOffset,
             Bezier3 bezier
         );
 
@@ -49,7 +49,7 @@ namespace SingleTrackAI.AI
             ushort vehicleId,
             ref Vehicle vehicleData,
             Segment3 segment,
-            ushort vehiclePreviouslyReservingSpace
+            ushort ignoreVehicle
         );
 
         public delegate void InvalidPathDelegate(
@@ -64,9 +64,9 @@ namespace SingleTrackAI.AI
             TrainAI trainAi,
             ushort vehicleId,
             ref Vehicle vehicleData,
-            ushort num12,
-            ref NetNode netNode,
-            ref Vector4 vector,
+            ushort nodeId,
+            ref NetNode nodeData,
+            ref Vector4 targetPos,
             int index
         );
     }
