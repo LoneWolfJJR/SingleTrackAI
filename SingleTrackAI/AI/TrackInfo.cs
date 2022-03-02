@@ -6,7 +6,7 @@ namespace SingleTrackAI.AI
 {
     public struct TrackInfo
     {
-        private const VehicleInfo.VehicleType SupportedVehicleTypes = VehicleInfo.VehicleType.Train | VehicleInfo.VehicleType.Metro;
+        public const VehicleInfo.VehicleType SupportedVehicleTypes = VehicleInfo.VehicleType.Train | VehicleInfo.VehicleType.Metro;
 
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once InconsistentNaming

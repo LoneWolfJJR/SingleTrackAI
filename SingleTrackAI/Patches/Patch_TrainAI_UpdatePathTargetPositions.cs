@@ -31,6 +31,9 @@ namespace SingleTrackAI.Patches
             float minSqrDistanceA,
             float minSqrDistanceB)
         {
+            if ((vehicleData.Info.m_vehicleType | TrackInfo.SupportedVehicleTypes) != TrackInfo.SupportedVehicleTypes)
+                return true; // call original
+
             var hookedTrainAi = new TrainAiHook(__instance);
 
             UpdatePathTargetPositions_Modified(

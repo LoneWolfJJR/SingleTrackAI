@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
 
     <Product>SingleTrainTrackAI</Product>
-    <Version>2.0</Version>
+    <Version>2.0.1</Version>
     <Description>Cities Skylines Train AI for two-way single tracks</Description>
   </PropertyGroup>
 
