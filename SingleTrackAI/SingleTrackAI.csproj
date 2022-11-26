@@ -20,10 +20,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -57,10 +59,11 @@
 
   <ItemGroup>
     <PackageReference Include="CitiesHarmony.API" Version="2.1.0" />
+    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.dll&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;" />
+    <Exec Command="&quot;$(PkgMono_Unofficial_pdb2mdb)\tools\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;mkdir &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.dll&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.mdb&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;" />
   </Target>
 
 </Project>
