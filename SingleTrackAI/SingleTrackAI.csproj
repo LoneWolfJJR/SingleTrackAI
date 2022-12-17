@@ -12,10 +12,10 @@
 
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=949504539</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/coarxflow/SingleTrainTrackAI</RepositoryUrl>
+    <RepositoryUrl>https://github.com/LoneWolfJJR/SingleTrainTrackAI.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <Product>SingleTrainTrackAI</Product>
+    <Product>Single Track AI</Product>
     <Version>2.0.1</Version>
     <Description>Cities Skylines Train AI for two-way single tracks</Description>
   </PropertyGroup>

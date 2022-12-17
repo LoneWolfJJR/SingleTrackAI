@@ -17,7 +17,7 @@ namespace SingleTrackAI
         /// <summary>
         /// Gets the mod's base display name (name only).
         /// </summary>
-        public override string BaseName => "SingleTrainTrackAI";
+        public override string BaseName => "Single Track AI";
 
         /// <summary>
         /// Gets the mod's unique Harmony identifier.
