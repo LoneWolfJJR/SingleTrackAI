@@ -28,7 +28,7 @@ namespace SingleTrackAI.UI
         public ListMessageBox()
         {
             // Set title.
-            Title = Mod.Name;
+            Title = Mod.Instance.BaseName;
 
             // Add buttons.
             AddButtons();

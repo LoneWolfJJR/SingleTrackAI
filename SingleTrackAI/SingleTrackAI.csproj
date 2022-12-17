@@ -64,4 +64,5 @@
     <Exec Command="&quot;$(PkgMono_Unofficial_pdb2mdb)\tools\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;mkdir &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.dll&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)\*.mdb&quot; &quot;%25LocalAppData%25\Colossal Order\Cities_Skylines\Addons\Mods\SingleTrainTrackAI\&quot;" />
   </Target>
 
+  <Import Project="..\..\AlgernonCommons\AlgernonCommonsPatchingShared.projitems" Label="Shared" />
 </Project>

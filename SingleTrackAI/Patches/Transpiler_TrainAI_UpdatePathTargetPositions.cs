@@ -17,6 +17,10 @@ namespace SingleTrackAI.Patches
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class Transpiler_TrainAI_UpdatePathTargetPositions
     {
+        public static bool NoCheckOverlapOnLastSegment { get; set; } = false;
+
+        public static bool FixReverseTrainSingleTrackStation { get; set; } = true;
+
         [UsedImplicitly]
         public static MethodBase TargetMethod()
         {
@@ -151,7 +155,7 @@ namespace SingleTrackAI.Patches
                     prevLaneID, prevPathPos.m_offset, bezier);
 
                 //address bug where some train are blocked after reversing at a single train track station
-                if (Settings.FixReverseTrainSingleTrackStation && mayNeedFix && maxSpeed < 0.01f)
+                if (FixReverseTrainSingleTrackStation && mayNeedFix && maxSpeed < 0.01f)
                 {
                     ushort vehiclePreviouslyReservingSpace = leaderID;
                     if ((leaderData.m_flags & Vehicle.Flags.Reversed) != 0)
@@ -252,7 +256,7 @@ namespace SingleTrackAI.Patches
 
 
                     //return true so that CheckNextLane does not interfere (it causes train to stop when going from one track to double track with a train waiting in the opposite direction)
-                    if (Settings.NoCheckOverlapOnLastSegment && next_segment_id == ri.section.segment_ids[ri.section.segment_ids.Count - 1])
+                    if (NoCheckOverlapOnLastSegment && next_segment_id == ri.section.segment_ids[ri.section.segment_ids.Count - 1])
                         preventCheckNextLane = true;
                 }
                 else //section reserved by another train

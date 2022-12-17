@@ -19,9 +19,9 @@ namespace SingleTrackAI
         private static void LogError([CanBeNull] Exception exception, [CanBeNull] string message)
         {
             if (exception == null && String.IsNullOrEmpty(message))
-                return; // WTF! Oh well, nothing to log ¯\_(ツ)_/¯\
+                return; // WTF! Oh well, nothing to log ¯\_(ツ)_/¯
 
-            var builder = new StringBuilder($"{Mod.Name} {Mod.Version}: ");
+            var builder = new StringBuilder($"{Mod.Instance.Name}: ");
 
             if (message != null)
                 builder.AppendLine(message);
@@ -52,7 +52,7 @@ namespace SingleTrackAI
             if (String.IsNullOrEmpty(message))
                 return; // WTF! Oh well, nothing to log ¯\_(ツ)_/¯\
 
-            UnityEngine.Debug.Log($"{Mod.Name} {Mod.Version}: {message}");
+            UnityEngine.Debug.Log($"{Mod.Instance.Name}: {message}");
         }
     }
 }

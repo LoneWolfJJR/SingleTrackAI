@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlgernonCommons.Patching;
 using ICities;
 using JetBrains.Annotations;
 using SingleTrackAI.AI;
@@ -9,46 +10,22 @@ using SingleTrackAI.UI;
 namespace SingleTrackAI
 {
     [PublicAPI]
-    public sealed class Loading : LoadingExtensionBase
+    public sealed class Loading : PatcherLoadingBase<OptionsPanel, Patcher>
     {
-        private string[] _conflictingMods;
-        private bool ConflictingModsEnabled
-        {
-            get
-            {
-                if (_conflictingMods == null)
-                    _conflictingMods = Mod.DetermineConflictingMods();
-
-                return _conflictingMods.Length != 0;
-            }
-        }
-
         /// <summary>
-        /// Called by the game when the mod is initialized at the start of the loading process.
+        /// Performs any actions upon successful creation of the mod.
+        /// E.g. Can be used to patch any other mods.
         /// </summary>
         /// <param name="loading">Loading mode (e.g. game, editor, scenario, etc.)</param>
-        public override void OnCreated(ILoading loading)
+        protected override void CreatedActions(ILoading loading)
         {
-            base.OnCreated(loading);
+            base.CreatedActions(loading);
 
             // Don't do anything if not in game (e.g. if we're going into an editor).
             if (loading.currentMode != AppMode.Game)
             {
                 Logger.Debug("Not in-game; reverting Harmony patches.");
-                Patcher.Revert();
-                return;
-            }
-
-            if (!Patcher.Patched)
-            {
-                Logger.Error("Harmony patches not applied; aborting!");
-                return;
-            }
-
-            if (ConflictingModsEnabled)
-            {
-                Logger.Error("Conflicting mods detected; reverting Harmony patches.");
-                Patcher.Revert();
+                CreatedAbortActions();
                 return;
             }
 
@@ -56,26 +33,12 @@ namespace SingleTrackAI
         }
 
         /// <summary>
-        /// Called by the game when level loading is complete.
+        /// Performs actions upon successful level loading completion.
         /// </summary>
         /// <param name="mode">Loading mode (e.g. game, editor, scenario, etc.)</param>
-        public override void OnLevelLoaded(LoadMode mode)
+        protected override void LoadedActions(LoadMode mode)
         {
-            base.OnLevelLoaded(mode);
-
-            if (ConflictingModsEnabled)
-            {
-                var modConflictBox = MessageBoxBase.ShowModal<ListMessageBox>();
-
-                modConflictBox.AddParas("Mod conflict detected!");
-                modConflictBox.AddParas($"{Mod.Name} detected a conflict with at least one other mod.");
-                modConflictBox.AddParas("This means that the mod is not able to operate and has shut down.");
-
-                modConflictBox.AddParas("The conflicting mods are:");
-                modConflictBox.AddList(_conflictingMods);
-
-                modConflictBox.AddParas($"These mods must be disabled or unsubscribed before {Mod.Name} can operate.");
-            }
+            base.LoadedActions(mode);
 
             switch (mode)
             {
